@@ -7,9 +7,18 @@ import java.io.File
 class Comparator {
 
     fun compare(path1: String, path2: String) {
-        val suites1 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\my-todo\\src\\main\\resources\\suites1.csv")
-        val suites2 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\my-todo\\src\\main\\resources\\suites2.csv")
-        println("")
+        val suites1 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\allure-comparator\\src\\main\\resources\\suites1.csv")
+        val suites2 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\allure-comparator\\src\\main\\resources\\suites2.csv")
+        val s1 = suites1.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
+        val s2 = suites2.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
+        val dif = s1 - s2
+//        var s1add: Map<String, String> = s1
+//        if (s1.size > s2.size) {
+//            s2.forEach { (k, v) ->
+//               s1add.entries
+//            }
+//        }
+//        println()
     }
 
     private fun readCsvFromFile(path: String): List<AllureData> =

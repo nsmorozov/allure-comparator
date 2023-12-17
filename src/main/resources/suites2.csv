@@ -1,3 +1,4 @@
 "Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
 "passed","Thu Nov 04 23:45:01 OMST 2021","Thu Nov 04 23:45:23 OMST 2021","21667","","SmokeTest","","SmokeTest","verifyHomePage","Verify Search results",""
 "passed","Thu Nov 04 23:45:01 OMST 2021","Thu Nov 04 23:45:01 OMST 2021","141","","SmokeTest","","SmokeTest","testSum","Check sum",""
+"passed","Thu Nov 04 23:45:01 OMST 2021","Thu Nov 04 23:45:01 OMST 2021","141","","SmokeTest","","SmokeTest","testSubstraction","Check sum",""
