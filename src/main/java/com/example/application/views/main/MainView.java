@@ -38,6 +38,7 @@ public class MainView extends VerticalLayout {
         downloadBtn.addClickListener(e -> {
 //            (new Downloader()).download(urlField1.getValue(), REPORT_1_CSV);
 //            (new Downloader()).download(urlField2.getValue(), REPORT_2_CSV);
+            table.getBody().removeAllRows();
             Diff data = new Comparator().compare("/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
                     "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv");
             buildTable(table, data);
@@ -47,7 +48,6 @@ public class MainView extends VerticalLayout {
         cleanTableButton.addClickListener(e -> {
             table.getBody().removeAllRows();
             remove(table);
-
         });
 
         buttonsPanel.add(downloadBtn, cleanTableButton);
