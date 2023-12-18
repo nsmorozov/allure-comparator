@@ -1,6 +1,6 @@
 package com.example.application.dto
 
-data class AllureData (
+data class AllureDataEntry (
         val status: String,
         val startTime: String,
         val stopTime: String,

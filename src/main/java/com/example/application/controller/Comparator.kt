@@ -1,33 +1,35 @@
 package com.example.application.controller
 
-import com.example.application.dto.AllureData
+import com.example.application.dto.AllureDataEntry
+import com.example.application.dto.Diff
 import org.apache.commons.csv.CSVFormat
 import java.io.File
 
 class Comparator {
 
-    fun compare(path1: String, path2: String) {
-        val suites1 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\allure-comparator\\src\\main\\resources\\suites1.csv")
-        val suites2 = readCsvFromFile("C:\\Users\\NMorozov\\IdeaProjects\\allure-comparator\\src\\main\\resources\\suites2.csv")
+    fun compare(path1: String, path2: String): Diff {
+        val suites1 = readCsvFromFile(path1)
+        val suites2 = readCsvFromFile(path2)
         val s1 = suites1.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
         val s2 = suites2.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
         val dif = s1 - s2
+
 //        var s1add: Map<String, String> = s1
 //        if (s1.size > s2.size) {
 //            s2.forEach { (k, v) ->
 //               s1add.entries
 //            }
 //        }
-//        println()
+        return Diff(dif, suites1, suites2)
     }
 
-    private fun readCsvFromFile(path: String): List<AllureData> =
+    private fun readCsvFromFile(path: String): List<AllureDataEntry> =
             CSVFormat.Builder.create(CSVFormat.DEFAULT).apply {
                 setIgnoreSurroundingSpaces(true)
             }.build().parse(File(path).inputStream().reader())
                     .drop(1) // drop header
                     .map {
-                        AllureData( status = it[0],
+                        AllureDataEntry( status = it[0],
                                     startTime = it[1],
                                     stopTime = it[2],
                                     duration = it[3],
