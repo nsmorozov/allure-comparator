@@ -2,9 +2,8 @@ package com.example.application.views.main;
 
 import com.example.application.controller.Comparator;
 import com.example.application.dto.Diff;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
@@ -34,9 +33,9 @@ public class MainView extends VerticalLayout {
         downloadBtn = new Button("Сравнить");
         cleanTableButton = new Button("Очистить");
         table =  new Table();
+        HorizontalLayout buttonsPanel = new HorizontalLayout();
 
         downloadBtn.addClickListener(e -> {
-            Notification.show("Hello " + urlField1.getValue());
 //            (new Downloader()).download(urlField1.getValue(), REPORT_1_CSV);
 //            (new Downloader()).download(urlField2.getValue(), REPORT_2_CSV);
             Diff data = new Comparator().compare("/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
@@ -44,14 +43,17 @@ public class MainView extends VerticalLayout {
             buildTable(table, data);
             add(table);
         });
-        downloadBtn.addClickShortcut(Key.ENTER);
+
         cleanTableButton.addClickListener(e -> {
+            table.getBody().removeAllRows();
             remove(table);
+
         });
 
+        buttonsPanel.add(downloadBtn, cleanTableButton);
         setMargin(true);
-        setHorizontalComponentAlignment(Alignment.CENTER, urlField1, urlField2, downloadBtn, cleanTableButton, table);
-        add(urlField1, urlField2, downloadBtn, cleanTableButton);
+        setHorizontalComponentAlignment(Alignment.CENTER, urlField1, urlField2, buttonsPanel, table);
+        add(urlField1, urlField2, buttonsPanel);
     }
 
     private Table buildTable(Table table, Diff diff) {
