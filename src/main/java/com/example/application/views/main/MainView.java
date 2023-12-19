@@ -41,7 +41,7 @@ public class MainView extends VerticalLayout {
 //            (new Downloader()).download(urlField2.getValue(), REPORT_2_CSV);
             Diff data = new Comparator().compare("/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
                     "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv");
-            grid.setItems(data.asList());
+            grid.setItems(data.getDifferenceList());
             add(grid);
 
         });

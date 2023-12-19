@@ -13,9 +13,7 @@ class Comparator {
         val suites2 = readCsvFromFile(path2)
         val s1 = suites1.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
         val s2 = suites2.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
-        val diff = Maps.difference(s1, s2)
-        val d1 = diff.entriesDiffering().mapValues { it.toString() }
-        return Diff(d1, suites1, suites2)
+        return Diff(Maps.difference(s1, s2))
     }
 
     private fun readCsvFromFile(path: String): List<AllureDataEntry> =
