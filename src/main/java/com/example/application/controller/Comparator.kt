@@ -11,8 +11,8 @@ class Comparator {
     fun compare(path1: String, path2: String): Diff {
         val suites1 = readCsvFromFile(path1)
         val suites2 = readCsvFromFile(path2)
-        val s1 = suites1.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
-        val s2 = suites2.associate { "${it.classDesc}.${it.methodDesc}" to it.status }
+        val s1 = suites1.associate { it.name to it.status }
+        val s2 = suites2.associate { it.name to it.status }
         return Diff(Maps.difference(s1, s2))
     }
 
@@ -23,16 +23,9 @@ class Comparator {
                     .drop(1) // пропускаем заголовок
                     .map {
                         AllureDataEntry(status = it[0],
-                                        startTime = it[1],
-                                        stopTime = it[2],
-                                        duration = it[3],
-                                        parentSuite = it[4],
-                                        suite = it[5],
-                                        subSuite = it[6],
-                                        classDesc = it[7],
-                                        methodDesc = it[8],
-                                        name = it[9],
-                                        description = it[10]
+                                        name = it[1],
+                                        duration = it[2],
+                                        description = it[3]
                         )
                     }
 }

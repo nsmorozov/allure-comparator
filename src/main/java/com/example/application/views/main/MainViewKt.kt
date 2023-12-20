@@ -1,7 +1,8 @@
 package com.example.application.views.main
 
+import com.example.application.controller.Downloader
 import com.example.application.dto.Diff.TestStatus
-import com.vaadin.flow.component.ClickEvent
+import com.vaadin.flow.component.Unit
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.orderedlayout.FlexComponent
@@ -15,58 +16,67 @@ import com.vaadin.flow.router.Route
 @Route(value = "")
 class MainView : VerticalLayout() {
 
-    private val urlField1: TextField = TextField("Репорт 1")
-    private val urlField2: TextField = TextField("Репорт 2")
+    private val urlField1: TextField = TextField("Ссылка на allure отчет 1")
+    private val urlField2: TextField = TextField("Ссылка на allure отчет 2")
     private val downloadBtn: Button = Button("Сравнить")
     private val cleanTableButton: Button = Button("Очистить")
 
     init {
 
         val buttonsPanel = HorizontalLayout()
+        val urlFieldsPanel = HorizontalLayout()
+        val gridPanel = HorizontalLayout()
+        gridPanel.setWidth(100F, Unit.PERCENTAGE)
 
         val gridDiff = Grid(
             TestStatus::class.java, false
         )
-        gridDiff.addColumn(TestStatus::name).setHeader("Test name")
-        gridDiff.addColumn(TestStatus::status).setHeader("Test diff")
+        with(gridDiff) {
+            addColumn(TestStatus::name).setHeader("Название теста")
+            addColumn(TestStatus::status).setHeader("Разница")
+        }
 
         val gridLeft = Grid(
             TestStatus::class.java, false
         )
-        gridLeft.addColumn(TestStatus::name).setHeader("Tests on left")
-        gridLeft.addColumn(TestStatus::status).setHeader("Test status")
+        with(gridLeft) {
+            addColumn(TestStatus::name).setHeader("Тесты слева")
+            addColumn(TestStatus::status).setHeader("Статус теста")
+        }
 
         val gridRight = Grid(
             TestStatus::class.java, false
         )
-        gridRight.addColumn(TestStatus::name).setHeader("Tests on right")
-        gridRight.addColumn(TestStatus::status).setHeader("Test status")
+        with(gridRight) {
+            addColumn(TestStatus::name).setHeader("Тесты справа")
+            addColumn(TestStatus::status).setHeader("Статус теста")
+        }
 
         downloadBtn.addClickListener {
-//            (new Downloader()).download(urlField1.getValue(), REPORT_1_CSV);
-//            (new Downloader()).download(urlField2.getValue(), REPORT_2_CSV);
+            Downloader().download(urlField1.value, REPORT_1_CSV)
+            Downloader().download(urlField2.value, REPORT_2_CSV)
             val data = com.example.application.controller.Comparator().compare(
-                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
-                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv"
+                REPORT_1_CSV,
+                REPORT_2_CSV
+//                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
+//                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv"
             )
             gridDiff.setItems(data.getDifferenceList())
             gridLeft.setItems(data.getLeftEntriesList())
             gridRight.setItems(data.getRightEntriesList())
-            add(gridDiff)
-            add(gridLeft)
-            add(gridRight)
+            gridPanel.add(gridLeft, gridDiff, gridRight)
+            add(gridPanel)
         }
         cleanTableButton.addClickListener {
             remove(
-                gridDiff,
-                gridLeft,
-                gridRight
+                gridPanel
             )
         }
         buttonsPanel.add(downloadBtn, cleanTableButton)
+        urlFieldsPanel.add(urlField1, urlField2)
         isMargin = true
-        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlField1, urlField2, buttonsPanel)
-        add(urlField1, urlField2, buttonsPanel)
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
+        add(urlFieldsPanel, buttonsPanel)
     }
 
     companion object {
