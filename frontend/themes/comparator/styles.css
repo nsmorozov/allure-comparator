@@ -1,0 +1,9 @@
+vaadin-text-field {
+    width: 500px;
+    margin-left: 20px;
+    font-size: 12px;
+}
+
+vaadin-grid {
+    font-size: 12px;
+}

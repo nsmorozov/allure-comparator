@@ -26,6 +26,7 @@ class MainView : VerticalLayout() {
         val buttonsPanel = HorizontalLayout()
         val urlFieldsPanel = HorizontalLayout()
         val gridPanel = HorizontalLayout()
+
         gridPanel.setWidth(100F, Unit.PERCENTAGE)
 
         val gridDiff = Grid(
@@ -53,28 +54,34 @@ class MainView : VerticalLayout() {
         }
 
         downloadBtn.addClickListener {
-            Downloader().download(urlField1.value, REPORT_1_CSV)
-            Downloader().download(urlField2.value, REPORT_2_CSV)
+
+             with(Downloader()) {
+                download(urlField1.value, REPORT_1_CSV)
+                download(urlField2.value, REPORT_2_CSV)
+            }
+
             val data = com.example.application.controller.Comparator().compare(
                 REPORT_1_CSV,
                 REPORT_2_CSV
 //                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
 //                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv"
             )
+
             gridDiff.setItems(data.getDifferenceList())
             gridLeft.setItems(data.getLeftEntriesList())
             gridRight.setItems(data.getRightEntriesList())
             gridPanel.add(gridLeft, gridDiff, gridRight)
             add(gridPanel)
         }
+
         cleanTableButton.addClickListener {
             remove(
-                gridPanel
+                gridPanel,
             )
         }
+
         buttonsPanel.add(downloadBtn, cleanTableButton)
         urlFieldsPanel.add(urlField1, urlField2)
-        isMargin = true
         setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
         add(urlFieldsPanel, buttonsPanel)
     }
