@@ -23,24 +23,44 @@ class MainView : VerticalLayout() {
     init {
 
         val buttonsPanel = HorizontalLayout()
-        val grid = Grid(
+
+        val gridDiff = Grid(
             TestStatus::class.java, false
         )
-        grid.addColumn(TestStatus::name).setHeader("Test name")
-        grid.addColumn(TestStatus::status).setHeader("Test status")
-        downloadBtn.addClickListener { e: ClickEvent<Button?>? ->
+        gridDiff.addColumn(TestStatus::name).setHeader("Test name")
+        gridDiff.addColumn(TestStatus::status).setHeader("Test diff")
+
+        val gridLeft = Grid(
+            TestStatus::class.java, false
+        )
+        gridLeft.addColumn(TestStatus::name).setHeader("Tests on left")
+        gridLeft.addColumn(TestStatus::status).setHeader("Test status")
+
+        val gridRight = Grid(
+            TestStatus::class.java, false
+        )
+        gridRight.addColumn(TestStatus::name).setHeader("Tests on right")
+        gridRight.addColumn(TestStatus::status).setHeader("Test status")
+
+        downloadBtn.addClickListener {
 //            (new Downloader()).download(urlField1.getValue(), REPORT_1_CSV);
 //            (new Downloader()).download(urlField2.getValue(), REPORT_2_CSV);
             val data = com.example.application.controller.Comparator().compare(
                 "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
                 "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv"
             )
-            grid.setItems(data.getDifferenceList())
-            add(grid)
+            gridDiff.setItems(data.getDifferenceList())
+            gridLeft.setItems(data.getLeftEntriesList())
+            gridRight.setItems(data.getRightEntriesList())
+            add(gridDiff)
+            add(gridLeft)
+            add(gridRight)
         }
-        cleanTableButton.addClickListener { e: ClickEvent<Button?>? ->
+        cleanTableButton.addClickListener {
             remove(
-                grid
+                gridDiff,
+                gridLeft,
+                gridRight
             )
         }
         buttonsPanel.add(downloadBtn, cleanTableButton)
