@@ -33,7 +33,7 @@ class MainView : VerticalLayout() {
             TestStatus::class.java, false
         )
         with(gridDiff) {
-            addColumn(TestStatus::name).setHeader("Название теста")
+            addColumn(TestStatus::name).setHeader("Название теста").setAutoWidth(true).setFlexGrow(0)
             addColumn(TestStatus::status).setHeader("Разница")
         }
 
@@ -41,7 +41,7 @@ class MainView : VerticalLayout() {
             TestStatus::class.java, false
         )
         with(gridLeft) {
-            addColumn(TestStatus::name).setHeader("Тесты слева")
+            addColumn(TestStatus::name).setHeader("Тесты слева").setAutoWidth(true).setFlexGrow(0)
             addColumn(TestStatus::status).setHeader("Статус теста")
         }
 
@@ -49,15 +49,15 @@ class MainView : VerticalLayout() {
             TestStatus::class.java, false
         )
         with(gridRight) {
-            addColumn(TestStatus::name).setHeader("Тесты справа")
+            addColumn(TestStatus::name).setHeader("Тесты справа").setAutoWidth(true).setFlexGrow(0)
             addColumn(TestStatus::status).setHeader("Статус теста")
         }
 
         downloadBtn.addClickListener {
 
              with(Downloader()) {
-                download(urlField1.value, REPORT_1_CSV)
-                download(urlField2.value, REPORT_2_CSV)
+                download(urlField1.value.replace(INDEX_HTML, ""), REPORT_1_CSV)
+                download(urlField2.value.replace(INDEX_HTML, ""), REPORT_2_CSV)
             }
 
             val data = com.example.application.controller.Comparator().compare(
@@ -70,8 +70,8 @@ class MainView : VerticalLayout() {
             gridDiff.setItems(data.getDifferenceList())
             gridLeft.setItems(data.getLeftEntriesList())
             gridRight.setItems(data.getRightEntriesList())
-            gridPanel.add(gridLeft, gridDiff, gridRight)
-            add(gridPanel)
+            gridPanel.add(gridLeft, gridRight)
+            add(gridDiff, gridPanel)
         }
 
         cleanTableButton.addClickListener {
@@ -89,5 +89,6 @@ class MainView : VerticalLayout() {
     companion object {
         const val REPORT_1_CSV = "report1.csv"
         const val REPORT_2_CSV = "report2.csv"
+        const val INDEX_HTML = "index.html"
     }
 }
