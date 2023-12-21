@@ -56,6 +56,7 @@ class MainView : VerticalLayout() {
         downloadBtn.addClickListener {
 
              with(Downloader()) {
+                deleteFiles(REPORT_1_CSV, REPORT_2_CSV)
                 download(urlField1.value.replace(INDEX_HTML, ""), REPORT_1_CSV)
                 download(urlField2.value.replace(INDEX_HTML, ""), REPORT_2_CSV)
             }
@@ -63,8 +64,6 @@ class MainView : VerticalLayout() {
             val data = com.example.application.controller.Comparator().compare(
                 REPORT_1_CSV,
                 REPORT_2_CSV
-//                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites1.csv",
-//                "/Users/n.morozov/IdeaProjects/allure-comparator/src/main/resources/suites2.csv"
             )
 
             gridDiff.setItems(data.getDifferenceList())
@@ -85,7 +84,6 @@ class MainView : VerticalLayout() {
         setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
         add(urlFieldsPanel, buttonsPanel)
     }
-
     companion object {
         const val REPORT_1_CSV = "report1.csv"
         const val REPORT_2_CSV = "report2.csv"

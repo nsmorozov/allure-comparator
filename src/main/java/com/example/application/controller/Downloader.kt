@@ -2,9 +2,11 @@ package com.example.application.controller
 
 import com.vaadin.flow.component.notification.Notification
 import java.io.FileOutputStream
-import java.net.MalformedURLException
+import java.io.IOException
 import java.net.URL
 import java.nio.channels.Channels
+import java.nio.file.Files
+import kotlin.io.path.Path
 
 class Downloader {
 
@@ -19,8 +21,12 @@ class Downloader {
                     }
                 }
             }
-        } catch (e: MalformedURLException) {
+        } catch (e: IOException ) {
             Notification.show("Проверьте URL до allure репорта. Текущий url = $url")
         }
+    }
+
+    fun deleteFiles(vararg files : String) {
+        files.forEach { Files.deleteIfExists(Path(it)) }
     }
 }
