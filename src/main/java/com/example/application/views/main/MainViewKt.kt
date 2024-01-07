@@ -71,8 +71,10 @@ class MainView : VerticalLayout() {
 
              with(Downloader()) {
                 deleteFiles(REPORT_1_CSV, REPORT_2_CSV)
-                download(urlField1.value.replace(INDEX_HTML, ""), REPORT_1_CSV)
-                download(urlField2.value.replace(INDEX_HTML, ""), REPORT_2_CSV)
+                download(urlField1.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
+                download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
+                download(urlField2.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
+                download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
             }
 
             val data: Diff
@@ -105,6 +107,8 @@ class MainView : VerticalLayout() {
     companion object {
         const val REPORT_1_CSV = "report1.csv"
         const val REPORT_2_CSV = "report2.csv"
+        const val SUITE_1_JSON = "suite1.json"
+        const val SUITE_2_JSON = "suite2.json"
         const val INDEX_HTML = "index.html"
         private val LIT_TEMPLATE_HTML = """
             <vaadin-button title="Go to ..."

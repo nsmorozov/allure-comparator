@@ -10,12 +10,10 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 
 class Downloader {
-
-    private val csvFile = "/data/suites.csv"
     fun download (url: String, outputFileName: String) {
 
         try {
-            URL(url + csvFile).openStream().use {
+            URL(url).openStream().use {
                 Channels.newChannel(it).use { rbc ->
                     FileOutputStream(outputFileName).use { fos ->
                         fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
