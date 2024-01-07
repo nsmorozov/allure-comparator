@@ -11,8 +11,10 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.renderer.LitRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
+
 
 @PageTitle("Сравнение репортов")
 @Route(value = "")
@@ -22,6 +24,7 @@ class MainView : VerticalLayout() {
     private val urlField2 = TextField("Ссылка на allure отчет 2")
     private val downloadBtn = Button("Сравнить")
     private val cleanTableButton = Button("Очистить")
+
 
     init {
 
@@ -36,7 +39,16 @@ class MainView : VerticalLayout() {
         )
         with(gridDiff) {
             addColumn(TestStatus::name).setHeader("Название теста").setAutoWidth(true).setFlexGrow(0)
-            addColumn(TestStatus::status).setHeader("Разница")
+//            addColumn(TestStatus::status).setHeader("Разница")
+            addColumn(
+                LitRenderer.of<TestStatus>(LIT_TEMPLATE_HTML)
+                    .withProperty("id", TestStatus::status)
+                    .withFunction("clickHandler") { status: TestStatus ->
+                        // Do whatever. For example navigate to other view.
+                        Notification.show("Link was clicked for ${status.name} #" + status.status)
+                    }
+            )
+                .setHeader("Разница").setSortable(true)
         }
 
         val gridLeft = Grid(
@@ -94,5 +106,12 @@ class MainView : VerticalLayout() {
         const val REPORT_1_CSV = "report1.csv"
         const val REPORT_2_CSV = "report2.csv"
         const val INDEX_HTML = "index.html"
+        private val LIT_TEMPLATE_HTML = """
+            <vaadin-button title="Go to ..."
+                           @click="${'$'}{clickHandler}"
+                           theme="tertiary-inline small link">
+                ${'$'}{item.id}
+            </vaadin-button>
+            """.trimIndent()
     }
 }
