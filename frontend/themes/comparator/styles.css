@@ -7,3 +7,8 @@ vaadin-text-field {
 vaadin-grid {
     font-size: 12px;
 }
+
+vaadin-button {
+    --vaadin-button-background: #f6f42e;
+    --vaadin-button-text-color: #63666a;
+}

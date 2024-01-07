@@ -1,10 +1,12 @@
 package com.example.application.views.main
 
 import com.example.application.controller.Downloader
+import com.example.application.dto.Diff
 import com.example.application.dto.Diff.TestStatus
 import com.vaadin.flow.component.Unit
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
@@ -16,10 +18,10 @@ import com.vaadin.flow.router.Route
 @Route(value = "")
 class MainView : VerticalLayout() {
 
-    private val urlField1: TextField = TextField("Ссылка на allure отчет 1")
-    private val urlField2: TextField = TextField("Ссылка на allure отчет 2")
-    private val downloadBtn: Button = Button("Сравнить")
-    private val cleanTableButton: Button = Button("Очистить")
+    private val urlField1 = TextField("Ссылка на allure отчет 1")
+    private val urlField2 = TextField("Ссылка на allure отчет 2")
+    private val downloadBtn = Button("Сравнить")
+    private val cleanTableButton = Button("Очистить")
 
     init {
 
@@ -61,21 +63,25 @@ class MainView : VerticalLayout() {
                 download(urlField2.value.replace(INDEX_HTML, ""), REPORT_2_CSV)
             }
 
-            val data = com.example.application.controller.Comparator().compare(
+            val data: Diff
+            if (Downloader().ifFilesDownloaded(REPORT_1_CSV, REPORT_2_CSV)) {
+                data = com.example.application.controller.Comparator().compare(
                 REPORT_1_CSV,
                 REPORT_2_CSV
             )
-
-            gridDiff.setItems(data.getDifferenceList())
-            gridLeft.setItems(data.getLeftEntriesList())
-            gridRight.setItems(data.getRightEntriesList())
-            gridPanel.add(gridLeft, gridRight)
-            add(gridDiff, gridPanel)
+                gridDiff.setItems(data.getDifferenceList())
+                gridLeft.setItems(data.getLeftEntriesList())
+                gridRight.setItems(data.getRightEntriesList())
+                gridPanel.add(gridLeft, gridRight)
+                add(gridDiff, gridPanel)
+            } else {
+                Notification.show("Не могу скачать репорты для сравнения")
+            }
         }
 
         cleanTableButton.addClickListener {
             remove(
-                gridPanel,
+                gridPanel, gridDiff
             )
         }
 

@@ -1,6 +1,7 @@
 package com.example.application.controller
 
 import com.vaadin.flow.component.notification.Notification
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
@@ -26,7 +27,14 @@ class Downloader {
         }
     }
 
-    fun deleteFiles(vararg files : String) {
+    fun deleteFiles(vararg files: String) {
         files.forEach { Files.deleteIfExists(Path(it)) }
+    }
+
+    fun ifFilesDownloaded(vararg  files: String): Boolean {
+        for (f in files) {
+            if (!File(f).exists()) return false
+        }
+        return true
     }
 }
