@@ -18,6 +18,12 @@ http://localhost:8080 в браузере.
 После сборки jar его можно запустить командой
 `java -jar target/comparator-1.0-SNAPSHOT.jar`
 
+Удаленный запуск через терминал на сервере
+`nohup java -jar target/comparator-1.0-SNAPSHOT.jar &`
+
+Для копирования jar файла на сервер с локальной машины можно использовать утилиту scp
+`scp /Users/n.morozov/IdeaProjects/allure-comparator/target/comparator-1.0-SNAPSHOT.jar ubuntu@aqa-01.nmorozov.crpt.cloud:/opt/allure-comparator`
+
 ## Структура проекта
 
 - `MainLayout.java` in `src/main/java` содержит разметку приложения
