@@ -1,5 +1,6 @@
 package com.example.application.views.main
 
+import com.example.application.controller.Comparator
 import com.example.application.controller.Downloader
 import com.example.application.dto.Diff
 import com.example.application.dto.Diff.TestStatus
@@ -24,6 +25,7 @@ class MainView : VerticalLayout() {
     private val urlField2 = TextField("Ссылка на allure отчет 2")
     private val downloadBtn = Button("Сравнить")
     private val cleanTableButton = Button("Очистить")
+    private var data: Diff? = null
 
 
     init {
@@ -39,13 +41,12 @@ class MainView : VerticalLayout() {
         )
         with(gridDiff) {
             addColumn(TestStatus::name).setHeader("Название теста").setAutoWidth(true).setFlexGrow(0)
-//            addColumn(TestStatus::status).setHeader("Разница")
             addColumn(
                 LitRenderer.of<TestStatus>(LIT_TEMPLATE_HTML)
                     .withProperty("id", TestStatus::status)
                     .withFunction("clickHandler") { status: TestStatus ->
-                        // Do whatever. For example navigate to other view.
-                        Notification.show("Link was clicked for ${status.name} #" + status.status)
+                        val s = data?.getDifferenceList()?.let { Comparator().getDiffDetails(it) }
+                        Notification.show("Link was clicked for ${status.name} # + ${status.status} diff = $s" )
                     }
             )
                 .setHeader("Разница").setSortable(true)
@@ -74,18 +75,19 @@ class MainView : VerticalLayout() {
                 download(urlField1.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
                 download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
                 download(urlField2.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
-                download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
+                download(urlField2.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
             }
 
-            val data: Diff
+
             if (Downloader().ifFilesDownloaded(REPORT_1_CSV, REPORT_2_CSV)) {
-                data = com.example.application.controller.Comparator().compare(
+                data = Comparator().compare(
                 REPORT_1_CSV,
                 REPORT_2_CSV
             )
-                gridDiff.setItems(data.getDifferenceList())
-                gridLeft.setItems(data.getLeftEntriesList())
-                gridRight.setItems(data.getRightEntriesList())
+                //val details = Comparator().getDiffDetails(data.getDifferenceList())
+                gridDiff.setItems(data!!.getDifferenceList())
+                gridLeft.setItems(data!!.getLeftEntriesList())
+                gridRight.setItems(data!!.getRightEntriesList())
                 gridPanel.add(gridLeft, gridRight)
                 add(gridDiff, gridPanel)
             } else {
