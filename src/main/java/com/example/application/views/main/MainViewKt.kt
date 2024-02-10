@@ -29,7 +29,6 @@ class MainView : VerticalLayout() {
 
 
     init {
-
         val buttonsPanel = HorizontalLayout()
         val urlFieldsPanel = HorizontalLayout()
         val gridPanel = HorizontalLayout()
@@ -45,11 +44,17 @@ class MainView : VerticalLayout() {
                 LitRenderer.of<TestStatus>(LIT_TEMPLATE_HTML)
                     .withProperty("id", TestStatus::status)
                     .withFunction("clickHandler") { status: TestStatus ->
-                        val s = data?.getDifferenceList()?.let { Comparator().getDiffDetails(it) }
-                        Notification.show("Link was clicked for ${status.name} # + ${status.status} diff = $s" )
+                        data?.getDifferenceList()?.let { Comparator().getDiffDetails(
+                            it,
+                            SUITE_1_JSON,
+                            SUITE_2_JSON
+                        ) } ?.filter { it.name == status.name }
+                            ?.forEach {
+                                CompareNotification("${urlField1.value}#suites/${it.infoLeft}", "${urlField2.value}#suites/${it.infoRight}").show()
+                            }
                     }
             )
-                .setHeader("Разница").setSortable(true)
+            .setHeader("Разница").setSortable(true)
         }
 
         val gridLeft = Grid(

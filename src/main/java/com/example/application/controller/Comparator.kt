@@ -33,15 +33,16 @@ class Comparator {
                         )
                     }
 
-    fun getDiffDetails(s1: List<Diff.TestStatus>): MutableList<Diff.DiffInfo> {
+    fun getDiffDetails(s1: List<Diff.TestStatus>, allureSuiteFile1: String, allureSuiteFile2: String): MutableList<Diff.DiffInfo> {
         val diffList: MutableList<Diff.DiffInfo> =  mutableListOf()
         val mapper = jacksonObjectMapper()
-        val left = mapper.readValue<AllureTestSuite>(File("suite1.json").readText(Charsets.UTF_8))
-        val right = mapper.readValue<AllureTestSuite>(File("suite2.json").readText(Charsets.UTF_8))
+        val left = mapper.readValue<AllureTestSuite>(File(allureSuiteFile1).readText(Charsets.UTF_8))
+        val right = mapper.readValue<AllureTestSuite>(File(allureSuiteFile2).readText(Charsets.UTF_8))
         s1.forEach { diff ->
             val l = left.children.first { diff.name.contains(it.name) }
             val r = right.children.first { diff.name.contains(it.name) }
-            diffList.add(Diff.DiffInfo(diff.name, l.uid, r.uid))
+            //Запоминаем название теста и id сьюта, которому принадлежит тест
+            diffList.add(Diff.DiffInfo(diff.name, l.children[0].parentUid, r.children[0].parentUid))
         }
         return diffList
     }
