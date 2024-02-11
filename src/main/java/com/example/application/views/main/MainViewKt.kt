@@ -35,6 +35,80 @@ class MainView : VerticalLayout() {
 
         gridPanel.setWidth(100F, Unit.PERCENTAGE)
 
+        val gridDiff = createDifferenceGrid()
+        val gridLeft = createLeftGrid()
+        val gridRight = createRightGrid()
+
+        downloadBtn.addClickListener {
+            downloadAllureCsv()
+            populateGrids(gridDiff, gridLeft, gridRight, gridPanel)
+        }
+
+        cleanTableButton.addClickListener {
+            remove(gridPanel, gridDiff)
+        }
+
+        buttonsPanel.add(downloadBtn, cleanTableButton)
+        urlFieldsPanel.add(urlField1, urlField2)
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
+        add(urlFieldsPanel, buttonsPanel)
+    }
+
+    private fun populateGrids(
+        gridDiff: Grid<TestStatus>,
+        gridLeft: Grid<TestStatus>,
+        gridRight: Grid<TestStatus>,
+        gridPanel: HorizontalLayout
+    ) {
+        if (Downloader().ifFilesDownloaded(REPORT_1_CSV, REPORT_2_CSV)) {
+            data = Comparator().compare(
+                REPORT_1_CSV,
+                REPORT_2_CSV
+            )
+            //val details = Comparator().getDiffDetails(data.getDifferenceList())
+            gridDiff.setItems(data!!.getDifferenceList())
+            gridLeft.setItems(data!!.getLeftEntriesList())
+            gridRight.setItems(data!!.getRightEntriesList())
+            gridPanel.add(gridLeft, gridRight)
+            add(gridDiff, gridPanel)
+        } else {
+            Notification.show("Не могу скачать репорты для сравнения")
+        }
+    }
+
+    private fun downloadAllureCsv() {
+        with(Downloader()) {
+            deleteFiles(REPORT_1_CSV, REPORT_2_CSV)
+            download(urlField1.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
+            download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
+            download(urlField2.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
+            download(urlField2.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
+        }
+    }
+
+    private fun createRightGrid(): Grid<TestStatus> {
+        val gridRight = Grid(
+            TestStatus::class.java, false
+        )
+        with(gridRight) {
+            addColumn(TestStatus::name).setHeader("Тесты справа").setAutoWidth(true).setFlexGrow(0)
+            addColumn(TestStatus::status).setHeader("Статус теста")
+        }
+        return gridRight
+    }
+
+    private fun createLeftGrid(): Grid<TestStatus> {
+        val gridLeft = Grid(
+            TestStatus::class.java, false
+        )
+        with(gridLeft) {
+            addColumn(TestStatus::name).setHeader("Тесты слева").setAutoWidth(true).setFlexGrow(0)
+            addColumn(TestStatus::status).setHeader("Статус теста")
+        }
+        return gridLeft
+    }
+
+    private fun createDifferenceGrid(): Grid<TestStatus> {
         val gridDiff = Grid(
             TestStatus::class.java, false
         )
@@ -44,73 +118,26 @@ class MainView : VerticalLayout() {
                 LitRenderer.of<TestStatus>(LIT_TEMPLATE_HTML)
                     .withProperty("id", TestStatus::status)
                     .withFunction("clickHandler") { status: TestStatus ->
-                        data?.getDifferenceList()?.let { Comparator().getDiffDetails(
-                            it,
-                            SUITE_1_JSON,
-                            SUITE_2_JSON
-                        ) } ?.filter { it.name == status.name }
+                        data?.getDifferenceList()?.let {
+                            Comparator().getDiffDetails(
+                                it,
+                                SUITE_1_JSON,
+                                SUITE_2_JSON
+                            )
+                        }?.filter { it.name == status.name }
                             ?.forEach {
-                                CompareNotification("${urlField1.value}#suites/${it.infoLeft}", "${urlField2.value}#suites/${it.infoRight}").show()
+                                CompareNotification(
+                                    "${urlField1.value}#suites/${it.infoLeft}",
+                                    "${urlField2.value}#suites/${it.infoRight}"
+                                ).show()
                             }
                     }
             )
-            .setHeader("Разница").setSortable(true)
+                .setHeader("Разница").setSortable(true)
         }
-
-        val gridLeft = Grid(
-            TestStatus::class.java, false
-        )
-        with(gridLeft) {
-            addColumn(TestStatus::name).setHeader("Тесты слева").setAutoWidth(true).setFlexGrow(0)
-            addColumn(TestStatus::status).setHeader("Статус теста")
-        }
-
-        val gridRight = Grid(
-            TestStatus::class.java, false
-        )
-        with(gridRight) {
-            addColumn(TestStatus::name).setHeader("Тесты справа").setAutoWidth(true).setFlexGrow(0)
-            addColumn(TestStatus::status).setHeader("Статус теста")
-        }
-
-        downloadBtn.addClickListener {
-
-             with(Downloader()) {
-                deleteFiles(REPORT_1_CSV, REPORT_2_CSV)
-                download(urlField1.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
-                download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
-                download(urlField2.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
-                download(urlField2.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
-            }
-
-
-            if (Downloader().ifFilesDownloaded(REPORT_1_CSV, REPORT_2_CSV)) {
-                data = Comparator().compare(
-                REPORT_1_CSV,
-                REPORT_2_CSV
-            )
-                //val details = Comparator().getDiffDetails(data.getDifferenceList())
-                gridDiff.setItems(data!!.getDifferenceList())
-                gridLeft.setItems(data!!.getLeftEntriesList())
-                gridRight.setItems(data!!.getRightEntriesList())
-                gridPanel.add(gridLeft, gridRight)
-                add(gridDiff, gridPanel)
-            } else {
-                Notification.show("Не могу скачать репорты для сравнения")
-            }
-        }
-
-        cleanTableButton.addClickListener {
-            remove(
-                gridPanel, gridDiff
-            )
-        }
-
-        buttonsPanel.add(downloadBtn, cleanTableButton)
-        urlFieldsPanel.add(urlField1, urlField2)
-        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
-        add(urlFieldsPanel, buttonsPanel)
+        return gridDiff
     }
+
     companion object {
         const val REPORT_1_CSV = "report1.csv"
         const val REPORT_2_CSV = "report2.csv"
