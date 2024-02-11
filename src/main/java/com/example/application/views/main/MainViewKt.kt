@@ -79,10 +79,12 @@ class MainView : VerticalLayout() {
     private fun downloadAllureCsv() {
         with(Downloader()) {
             deleteFiles(REPORT_1_CSV, REPORT_2_CSV)
-            download(urlField1.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
-            download(urlField1.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
-            download(urlField2.value.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
-            download(urlField2.value.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
+            val v1 = urlField1.value.refineUrl()
+            val v2 = urlField2.value.refineUrl()
+            download(v1.replace(INDEX_HTML, "/data/suites.csv"), REPORT_1_CSV)
+            download(v1.replace(INDEX_HTML, "/data/suites.json"), SUITE_1_JSON)
+            download(v2.replace(INDEX_HTML, "/data/suites.csv"), REPORT_2_CSV)
+            download(v2.replace(INDEX_HTML, "/data/suites.json"), SUITE_2_JSON)
         }
     }
 
@@ -127,8 +129,8 @@ class MainView : VerticalLayout() {
                         }?.filter { it.name == status.name }
                             ?.forEach {
                                 CompareNotification(
-                                    "${urlField1.value}#suites/${it.infoLeft}",
-                                    "${urlField2.value}#suites/${it.infoRight}"
+                                    "${urlField1.value.refineUrl()}#suites/${it.infoLeft}",
+                                    "${urlField2.value.refineUrl()}#suites/${it.infoRight}"
                                 ).show()
                             }
                     }
@@ -153,3 +155,6 @@ class MainView : VerticalLayout() {
             """.trimIndent()
     }
 }
+
+//Иногда url до Allure репорта содержит # в конце, которую надо убирать
+private fun String.refineUrl(): String = if (this.last() == '#') this.dropLast(1) else this
