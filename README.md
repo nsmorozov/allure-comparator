@@ -23,6 +23,12 @@ http://localhost:8080 в браузере.
 
 Для копирования jar файла на сервер с локальной машины можно использовать утилиту scp
 `scp /Users/n.morozov/IdeaProjects/allure-comparator/target/comparator-1.0-SNAPSHOT.jar ubuntu@aqa-01.nmorozov.crpt.cloud:/opt/allure-comparator`
+(но лучше сначала скопировать в home текущего юзера, иначе не всегда дает напрямую залить в `/opt`) т.е.
+`scp /Users/n.morozov/IdeaProjects/allure-comparator/target/comparator-1.0-SNAPSHOT.jar ubuntu@aqa-01.nmorozov.crpt.cloud:/home/ubuntu`
+
+Для остановки уже запущенного через nohup процесса(приложения):
+`ps -ef | grep comparator` - находим запущенный процесс, запоминаем его PID (например, 190582)
+Далее убиваем его `kill -9 190582`
 
 ## Структура проекта
 
