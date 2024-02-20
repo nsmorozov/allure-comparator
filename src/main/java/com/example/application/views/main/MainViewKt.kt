@@ -31,8 +31,9 @@ class MainView : VerticalLayout() {
 
     init {
 
-        val buttonsPanel = HorizontalLayout()
-        val urlFieldsPanel = HorizontalLayout()
+        val leftContainer = VerticalLayout()
+        val rightContainer = VerticalLayout()
+        val controlsContainer = HorizontalLayout()
         val gridPanel = HorizontalLayout()
 
         gridPanel.setWidth(100F, Unit.PERCENTAGE)
@@ -50,11 +51,12 @@ class MainView : VerticalLayout() {
         cleanTableButton.addClickListener {
             remove(gridPanel, gridDiff)
         }
-
-        buttonsPanel.add(downloadBtn, cleanTableButton)
-        urlFieldsPanel.add(urlField1, urlField2)
-        setHorizontalComponentAlignment(Alignment.CENTER, urlFieldsPanel, buttonsPanel, header)
-        add(header, urlFieldsPanel, buttonsPanel)
+        leftContainer.alignItems = Alignment.END
+        leftContainer.add(urlField1, downloadBtn)
+        rightContainer.add(urlField2, cleanTableButton)
+        controlsContainer.add(leftContainer, rightContainer)
+        setHorizontalComponentAlignment(Alignment.CENTER, controlsContainer, header)
+        add(header, controlsContainer)
     }
 
     private fun createHeader(): HorizontalLayout {
