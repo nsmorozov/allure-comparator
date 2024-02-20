@@ -12,3 +12,16 @@ vaadin-button {
     --vaadin-button-background: #f6f42e;
     --vaadin-button-text-color: #63666a;
 }
+
+vaadin-horizontal-layout.header {
+      background-color: #f6f42e;
+      margin: 0 0 10px;
+      padding: 38px 0 38px;
+      text-align: center;
+}
+
+img.logo {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+}

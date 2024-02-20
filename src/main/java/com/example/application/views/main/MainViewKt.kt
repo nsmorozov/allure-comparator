@@ -7,8 +7,9 @@ import com.example.application.dto.Diff.TestStatus
 import com.vaadin.flow.component.Unit
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.html.Image
 import com.vaadin.flow.component.notification.Notification
-import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -29,6 +30,7 @@ class MainView : VerticalLayout() {
 
 
     init {
+
         val buttonsPanel = HorizontalLayout()
         val urlFieldsPanel = HorizontalLayout()
         val gridPanel = HorizontalLayout()
@@ -38,6 +40,7 @@ class MainView : VerticalLayout() {
         val gridDiff = createDifferenceGrid()
         val gridLeft = createLeftGrid()
         val gridRight = createRightGrid()
+        val header = createHeader()
 
         downloadBtn.addClickListener {
             downloadAllureCsv()
@@ -50,8 +53,21 @@ class MainView : VerticalLayout() {
 
         buttonsPanel.add(downloadBtn, cleanTableButton)
         urlFieldsPanel.add(urlField1, urlField2)
-        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, urlFieldsPanel, buttonsPanel)
-        add(urlFieldsPanel, buttonsPanel)
+        setHorizontalComponentAlignment(Alignment.CENTER, urlFieldsPanel, buttonsPanel, header)
+        add(header, urlFieldsPanel, buttonsPanel)
+    }
+
+    private fun createHeader(): HorizontalLayout {
+        val header = HorizontalLayout()
+        val logo = Image("/images/image.svg", "Logo")
+        logo.className = "logo"
+        with(header) {
+            setWidthFull()
+            className = "header"
+            isSpacing = false
+            add(logo)
+        }
+        return header
     }
 
     private fun populateGrids(
