@@ -1,7 +1,7 @@
 # Сервис для сравнения Allure отчетов
 
 Сравнивает 2 Allure отчета передачей ссылок на них. Отображает разницу пройденных тестов. Базируется на связке Spring Boot и Vaadin
-Ссылка в формате https://allure.crpt.tech/api/buckets/gismt-bllk/report/DOCKER/TAPI/Report_26-12-2023_13-20_sim.lukyanov/index.html
+Ссылка в формате https://allure.crpt.tech/api/buckets/gismt-bllk/report/DOCKER/TAPI/Report_26-12-2023_13-20/index.html
 
 ## Запуск приложения
 
