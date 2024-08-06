@@ -10,8 +10,10 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 
 class Downloader {
-    fun download (url: String, outputFileName: String) {
-
+    fun download(
+        url: String,
+        outputFileName: String,
+    ) {
         try {
             URL(url).openStream().use {
                 Channels.newChannel(it).use { rbc ->
@@ -20,7 +22,7 @@ class Downloader {
                     }
                 }
             }
-        } catch (e: IOException ) {
+        } catch (e: IOException) {
             Notification.show("Проверьте URL до allure репорта. Текущий url = $url")
         }
     }
@@ -29,7 +31,7 @@ class Downloader {
         files.forEach { Files.deleteIfExists(Path(it)) }
     }
 
-    fun ifFilesDownloaded(vararg  files: String): Boolean {
+    fun ifFilesDownloaded(vararg files: String): Boolean {
         for (f in files) {
             if (!File(f).exists()) return false
         }

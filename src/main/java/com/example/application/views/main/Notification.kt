@@ -11,16 +11,19 @@ import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 
-
-class CompareNotification(leftUrl: String, rightUrl: String) {
-
+class CompareNotification(
+    leftUrl: String,
+    rightUrl: String,
+) {
     val notification = Notification()
+
     init {
-        val text = Div(
-            Text("Разница "),
-            Anchor(leftUrl, "Слева ", AnchorTarget.BLANK),
-            Anchor(rightUrl, "Справа", AnchorTarget.BLANK)
-        )
+        val text =
+            Div(
+                Text("Разница "),
+                Anchor(leftUrl, "Слева ", AnchorTarget.BLANK),
+                Anchor(rightUrl, "Справа", AnchorTarget.BLANK),
+            )
 
         val closeButton = Button(Icon("lumo", "cross"))
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE)
@@ -32,6 +35,7 @@ class CompareNotification(leftUrl: String, rightUrl: String) {
         notification.position = Notification.Position.MIDDLE
         notification.add(layout)
     }
+
     fun show() {
         notification.open()
     }

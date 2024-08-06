@@ -17,17 +17,14 @@ import com.vaadin.flow.data.renderer.LitRenderer
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 
-
 @PageTitle("Сравнение репортов")
 @Route(value = "")
 class MainView : VerticalLayout() {
-
     private val urlField1 = TextField("Ссылка на allure отчет 1")
     private val urlField2 = TextField("Ссылка на allure отчет 2")
     private val downloadBtn = Button("Сравнить")
     private val cleanTableButton = Button("Очистить")
     private var data: Diff? = null
-
 
     init {
 
@@ -76,14 +73,15 @@ class MainView : VerticalLayout() {
         gridDiff: Grid<TestStatus>,
         gridLeft: Grid<TestStatus>,
         gridRight: Grid<TestStatus>,
-        gridPanel: HorizontalLayout
+        gridPanel: HorizontalLayout,
     ) {
         if (Downloader().ifFilesDownloaded(REPORT_1_CSV, REPORT_2_CSV)) {
-            data = Comparator().compare(
-                REPORT_1_CSV,
-                REPORT_2_CSV
-            )
-            //val details = Comparator().getDiffDetails(data.getDifferenceList())
+            data =
+                Comparator().compare(
+                    REPORT_1_CSV,
+                    REPORT_2_CSV,
+                )
+            // val details = Comparator().getDiffDetails(data.getDifferenceList())
             gridDiff.setItems(data!!.getDifferenceList())
             gridLeft.setItems(data!!.getLeftEntriesList())
             gridRight.setItems(data!!.getRightEntriesList())
@@ -107,9 +105,11 @@ class MainView : VerticalLayout() {
     }
 
     private fun createRightGrid(): Grid<TestStatus> {
-        val gridRight = Grid(
-            TestStatus::class.java, false
-        )
+        val gridRight =
+            Grid(
+                TestStatus::class.java,
+                false,
+            )
         with(gridRight) {
             addColumn(TestStatus::name).setHeader("Тесты справа").setAutoWidth(true).setFlexGrow(0)
             addColumn(TestStatus::status).setHeader("Статус теста")
@@ -118,9 +118,11 @@ class MainView : VerticalLayout() {
     }
 
     private fun createLeftGrid(): Grid<TestStatus> {
-        val gridLeft = Grid(
-            TestStatus::class.java, false
-        )
+        val gridLeft =
+            Grid(
+                TestStatus::class.java,
+                false,
+            )
         with(gridLeft) {
             addColumn(TestStatus::name).setHeader("Тесты слева").setAutoWidth(true).setFlexGrow(0)
             addColumn(TestStatus::status).setHeader("Статус теста")
@@ -129,31 +131,36 @@ class MainView : VerticalLayout() {
     }
 
     private fun createDifferenceGrid(): Grid<TestStatus> {
-        val gridDiff = Grid(
-            TestStatus::class.java, false
-        )
+        val gridDiff =
+            Grid(
+                TestStatus::class.java,
+                false,
+            )
         with(gridDiff) {
             addColumn(TestStatus::name).setHeader("Название теста").setAutoWidth(true).setFlexGrow(0)
             addColumn(
-                LitRenderer.of<TestStatus>(LIT_TEMPLATE_HTML)
+                LitRenderer
+                    .of<TestStatus>(LIT_TEMPLATE_HTML)
                     .withProperty("id", TestStatus::status)
                     .withFunction("clickHandler") { status: TestStatus ->
-                        data?.getDifferenceList()?.let {
-                            Comparator().getDiffDetails(
-                                it,
-                                SUITE_1_JSON,
-                                SUITE_2_JSON
-                            )
-                        }?.filter { it.name == status.name }
+                        data
+                            ?.getDifferenceList()
+                            ?.let {
+                                Comparator().getDiffDetails(
+                                    it,
+                                    SUITE_1_JSON,
+                                    SUITE_2_JSON,
+                                )
+                            }?.filter { it.name == status.name }
                             ?.forEach {
                                 CompareNotification(
                                     "${urlField1.value.refineUrl()}#suites/${it.infoLeft}",
-                                    "${urlField2.value.refineUrl()}#suites/${it.infoRight}"
+                                    "${urlField2.value.refineUrl()}#suites/${it.infoRight}",
                                 ).show()
                             }
-                    }
-            )
-                .setHeader("Разница").setSortable(true)
+                    },
+            ).setHeader("Разница")
+                .setSortable(true)
         }
         return gridDiff
     }
@@ -164,7 +171,8 @@ class MainView : VerticalLayout() {
         const val SUITE_1_JSON = "suite1.json"
         const val SUITE_2_JSON = "suite2.json"
         const val INDEX_HTML = "index.html"
-        private val LIT_TEMPLATE_HTML = """
+        private val LIT_TEMPLATE_HTML =
+            """
             <vaadin-button title="Go to ..."
                            @click="${'$'}{clickHandler}"
                            theme="tertiary-inline small link">
@@ -174,5 +182,5 @@ class MainView : VerticalLayout() {
     }
 }
 
-//Иногда url до Allure репорта содержит # в конце, которую надо убирать
+// Иногда url до Allure репорта содержит # в конце, которую надо убирать
 private fun String.refineUrl(): String = if (this.last() == '#') this.dropLast(1) else this
